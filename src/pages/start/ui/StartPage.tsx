@@ -1,6 +1,6 @@
 import { Button, Stack, Text, Title } from '@mantine/core';
 import { useNavigate } from '@tanstack/react-router';
-import { questions } from '../../data/questions';
+import { questions } from '@/entities/question';
 import styles from './StartPage.module.css';
 
 export function StartPage() {

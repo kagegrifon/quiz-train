@@ -1,14 +1,13 @@
 import { Button, Group, Paper, Progress, Text } from '@mantine/core';
 import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
-import { questions } from '../../data/questions';
-import { QuestionView } from '../QuestionView/QuestionView';
+import { questions } from '@/entities/question';
+import { QuestionView } from '@/widgets/question-view';
 import styles from './QuizPage.module.css';
 
 export function QuizPage() {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
-  // answers: questionId -> selectedOptionIds
   const [answers, setAnswers] = useState<Record<string, string[]>>({});
 
   const question = questions[currentIndex];
@@ -51,9 +50,7 @@ export function QuizPage() {
             Назад
           </Button>
           {currentIndex < total - 1 ? (
-            <Button onClick={() => setCurrentIndex((i) => i + 1)}>
-              Вперёд
-            </Button>
+            <Button onClick={() => setCurrentIndex((i) => i + 1)}>Вперёд</Button>
           ) : (
             <Button color="green" onClick={handleFinish}>
               Завершить

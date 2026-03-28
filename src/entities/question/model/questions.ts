@@ -1,4 +1,4 @@
-import type { Question } from '../types/quiz';
+import type { Question } from './types';
 
 export const questions: Question[] = [
   {
@@ -38,14 +38,8 @@ export const questions: Question[] = [
       'Что такое замыкание (closure) в JavaScript?\n\nРассмотрите пример:\n\n```js\nfunction makeCounter() {\n  let count = 0;\n  return function () {\n    return ++count;\n  };\n}\nconst counter = makeCounter();\nconsole.log(counter()); // ?\nconsole.log(counter()); // ?\n```',
     mode: 'single',
     options: [
-      {
-        id: 'a',
-        labelMd: 'Выведет `1` и `1` — каждый вызов создаёт новый `count`',
-      },
-      {
-        id: 'b',
-        labelMd: 'Выведет `1` и `2` — функция сохраняет доступ к `count`',
-      },
+      { id: 'a', labelMd: 'Выведет `1` и `1` — каждый вызов создаёт новый `count`' },
+      { id: 'b', labelMd: 'Выведет `1` и `2` — функция сохраняет доступ к `count`' },
       { id: 'c', labelMd: 'Выведет ошибку — `count` недоступен снаружи' },
       { id: 'd', labelMd: 'Выведет `undefined` и `undefined`' },
     ],
@@ -85,8 +79,7 @@ export const questions: Question[] = [
   },
   {
     id: 'q6',
-    promptMd:
-      'Какие утверждения про `Promise` верны?',
+    promptMd: 'Какие утверждения про `Promise` верны?',
     mode: 'multi',
     options: [
       { id: 'a', labelMd: 'Promise может находиться в состоянии `pending`, `fulfilled` или `rejected`' },

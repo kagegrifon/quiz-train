@@ -1,28 +1,8 @@
 import { Button, Paper, RingProgress, Stack, Text, Title } from '@mantine/core';
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import { questions } from '../../data/questions';
+import { questions } from '@/entities/question';
+import { calcScore } from '@/shared/lib/scoring';
 import styles from './ResultsPage.module.css';
-
-function calcScore(answers: Record<string, string[]>): { score: number; maxScore: number } {
-  let score = 0;
-  let maxScore = 0;
-
-  for (const q of questions) {
-    maxScore += q.points;
-    const selected = answers[q.id] ?? [];
-
-    if (q.mode === 'single') {
-      if (selected.length === 1 && selected[0] === q.correctOptionIds[0]) {
-        score += q.points;
-      }
-    } else {
-      const correctSelected = selected.filter((id) => q.correctOptionIds.includes(id)).length;
-      score += q.points * (correctSelected / q.correctOptionIds.length);
-    }
-  }
-
-  return { score: Math.round(score), maxScore };
-}
 
 export function ResultsPage() {
   const navigate = useNavigate();
@@ -31,8 +11,9 @@ export function ResultsPage() {
     ? JSON.parse(search.answers as string)
     : {};
 
-  const { score, maxScore } = calcScore(answers);
+  const { score, maxScore } = calcScore(questions, answers);
   const percent = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
+  const color = percent >= 70 ? 'green' : percent >= 40 ? 'yellow' : 'red';
 
   return (
     <div className={styles.root}>
@@ -47,7 +28,7 @@ export function ResultsPage() {
                 {percent}%
               </Text>
             }
-            sections={[{ value: percent, color: percent >= 70 ? 'green' : percent >= 40 ? 'yellow' : 'red' }]}
+            sections={[{ value: percent, color }]}
           />
           <Text size="lg">
             Набрано: <strong>{score}</strong> из <strong>{maxScore}</strong> баллов
