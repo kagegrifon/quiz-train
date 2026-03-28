@@ -9,6 +9,15 @@
 - Удалён лишний `<Text component="span">` вокруг `<MarkdownContent inline>` — обёртка ничего не добавляла к стилям.
 - `JSON.parse` в `ResultsPage` защищён `try/catch` — невалидный URL не ронял страницу.
 
+## 2026-03-28 — Sprint 3: Reveal-логика
+
+### Решения
+- `RevealConfig` — отдельный интерфейс в `QuestionView`, экспортируется через `index.ts`. Выбрано вместо переноса в `shared/types` — тип тесно связан с виджетом.
+- Подсветка через CSS-классы `.optionCorrect` / `.optionWrong` на обёртке `<div>` — Mantine Radio/Checkbox не поддерживают per-item цвет, обёртка с background — наименее инвазивное решение.
+- `revealConfig: undefined` = нет подсветки (вместо boolean `isRevealed`) — позволяет передавать конфиг единым объектом и отключать одним undefined.
+- «Завершить» вынесен из условия `currentIndex === total - 1` — всегда видна, как требует спецификация.
+- `ResultsPage` переделан из centered-карточки в полноширинный scroll — нужно место для разбора всех вопросов.
+
 ### Отклонено
 - `useCallback` для `handleSingleChange` / `handleMultiChange` — без `React.memo` на дочерних компонентах не даёт эффекта.
 - `Set` вместо `Array.includes` для `selectedIds` — массив из 3–5 элементов, оптимизация не оправдана.
