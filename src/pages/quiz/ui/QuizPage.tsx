@@ -4,24 +4,28 @@ import { useState } from 'react';
 import { questions } from '@/entities/question';
 import { calcScore } from '@/shared/lib/scoring';
 import { formatTime, useCountdown } from '@/shared/lib/use-countdown';
+import type { RevealConfig } from '@/widgets/question-view';
 import { QuestionView } from '@/widgets/question-view';
 import styles from './QuizPage.module.css';
 
 export function QuizPage() {
   const navigate = useNavigate();
-  const { timerEnabled, timeLimitSec } = useSearch({ from: '/quiz' });
+  const { timerEnabled, timeLimitSec, revealWhen, showCorrect, showWrong } = useSearch({ from: '/quiz' });
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string[]>>({});
+  const [lockedIds, setLockedIds] = useState<string[]>([]);
 
   const question = questions[currentIndex];
   const total = questions.length;
   const progress = ((currentIndex + 1) / total) * 100;
   const selectedIds = answers[question.id] ?? [];
+  const isLocked = lockedIds.includes(question.id);
 
   const { score, maxScore } = calcScore(questions, answers);
+  const revealConfig: RevealConfig = { showCorrect, showWrong };
 
   const handleFinish = () => {
-    navigate({ to: '/results', search: { answers: JSON.stringify(answers) } });
+    navigate({ to: '/results', search: { answers: JSON.stringify(answers), revealWhen, showCorrect, showWrong } });
   };
 
   const remaining = useCountdown(timeLimitSec, timerEnabled, handleFinish);
@@ -29,6 +33,12 @@ export function QuizPage() {
 
   const handleChange = (ids: string[]) => {
     setAnswers((prev) => ({ ...prev, [question.id]: ids }));
+  };
+
+  const handleAnswer = () => {
+    const newLocked = [...lockedIds, question.id];
+    setLockedIds(newLocked);
+    if (newLocked.length === total) handleFinish();
   };
 
   return (
@@ -57,7 +67,14 @@ export function QuizPage() {
           question={question}
           selectedIds={selectedIds}
           onChange={handleChange}
+          disabled={isLocked}
+          revealConfig={revealWhen === 'afterAnswer' && isLocked ? revealConfig : undefined}
         />
+        {revealWhen === 'afterAnswer' && !isLocked && (
+          <Button mt="md" onClick={handleAnswer}>
+            Ответить
+          </Button>
+        )}
       </Paper>
 
       <Group justify="space-between" className={styles.footer}>
@@ -69,13 +86,12 @@ export function QuizPage() {
           >
             Назад
           </Button>
-          {currentIndex < total - 1 ? (
+          {currentIndex < total - 1 && (
             <Button onClick={() => setCurrentIndex((i) => i + 1)}>Вперёд</Button>
-          ) : (
-            <Button color="green" onClick={handleFinish}>
-              Завершить
-            </Button>
           )}
+          <Button color="green" onClick={handleFinish}>
+            Завершить
+          </Button>
         </Group>
         <Button variant="subtle" color="red" onClick={() => navigate({ to: '/' })}>
           Выйти из квиза

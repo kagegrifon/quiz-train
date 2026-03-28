@@ -18,3 +18,23 @@
 .options {
   padding-top: 0.5rem;
 }
+
+.option {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.optionCorrect {
+  background: light-dark(
+    var(--mantine-color-green-0),
+    color-mix(in srgb, var(--mantine-color-green-9) 40%, transparent)
+  );
+}
+
+.optionWrong {
+  background: light-dark(
+    var(--mantine-color-red-0),
+    color-mix(in srgb, var(--mantine-color-red-9) 40%, transparent)
+  );
+}

@@ -1,12 +1,9 @@
 .root {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 2rem;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
 }
 
-.card {
+.content {
   width: 100%;
-  max-width: 480px;
 }
