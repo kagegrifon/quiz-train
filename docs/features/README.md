@@ -43,3 +43,4 @@
 | Файл | Название | Статус |
 |---|---|---|
 | [color-scheme.md](color-scheme.md) | Переключение темы (тёмная / светлая) | planned |
+| [quiz-catalog.md](quiz-catalog.md) | Каталог квизов (выбор квиза) | planned |
