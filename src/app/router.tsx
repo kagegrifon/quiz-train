@@ -1,11 +1,12 @@
-import { createRootRoute, createRoute, createRouter, Outlet } from '@tanstack/react-router';
+import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router';
+import { AppLayout } from './AppLayout';
 import { StartPage } from '@/pages/start';
 import { QuizPage } from '@/pages/quiz';
 import { ResultsPage } from '@/pages/results';
 import { StatsPage } from '@/pages/stats';
 
 const rootRoute = createRootRoute({
-  component: () => <Outlet />,
+  component: AppLayout,
 });
 
 const indexRoute = createRoute({
