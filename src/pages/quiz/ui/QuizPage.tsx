@@ -68,9 +68,11 @@ export function QuizPage() {
             Вопрос {currentIndex + 1} из {total}
           </Text>
           <Group gap="xs">
-            <Badge variant="light" color="blue">
-              {score} / {maxScore} баллов
-            </Badge>
+            {revealWhen === 'afterAnswer' && (
+              <Badge variant="light" color="blue">
+                {score} / {maxScore} баллов
+              </Badge>
+            )}
             {timerEnabled && (
               <Badge variant="light" color={timerUrgent ? 'red' : 'gray'}>
                 {formatTime(remaining)}

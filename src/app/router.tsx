@@ -2,6 +2,7 @@ import { createRootRoute, createRoute, createRouter, Outlet } from '@tanstack/re
 import { StartPage } from '@/pages/start';
 import { QuizPage } from '@/pages/quiz';
 import { ResultsPage } from '@/pages/results';
+import { StatsPage } from '@/pages/stats';
 
 const rootRoute = createRootRoute({
   component: () => <Outlet />,
@@ -38,7 +39,13 @@ const resultsRoute = createRoute({
   component: ResultsPage,
 });
 
-const routeTree = rootRoute.addChildren([indexRoute, quizRoute, resultsRoute]);
+const statsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/stats',
+  component: StatsPage,
+});
+
+const routeTree = rootRoute.addChildren([indexRoute, quizRoute, resultsRoute, statsRoute]);
 
 export const router = createRouter({ routeTree });
 

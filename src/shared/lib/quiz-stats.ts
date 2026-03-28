@@ -12,6 +12,10 @@ export function loadAttempts(): AttemptRecord[] {
 }
 
 export function saveAttempt(attempt: AttemptRecord): void {
-  const attempts = loadAttempts();
-  localStorage.setItem(STORAGE_KEY, JSON.stringify([...attempts, attempt]));
+  try {
+    const attempts = loadAttempts();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([...attempts, attempt]));
+  } catch {
+    // storage unavailable or quota exceeded — skip saving
+  }
 }

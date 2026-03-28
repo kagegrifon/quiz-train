@@ -64,6 +64,11 @@ export function ResultsPage() {
               </>
             )}
             <Button onClick={() => navigate({ to: '/' })}>Начать заново</Button>
+            {attempts.length > 0 && (
+              <Button variant="subtle" onClick={() => navigate({ to: '/stats' })}>
+                Подробная статистика
+              </Button>
+            )}
           </Stack>
         </Paper>
 

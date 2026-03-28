@@ -71,6 +71,9 @@ export function StartPage() {
         <Button size="lg" fullWidth onClick={handleStart}>
           Начать квиз
         </Button>
+        <Button variant="subtle" fullWidth onClick={() => navigate({ to: '/stats' })}>
+          Статистика
+        </Button>
       </Stack>
     </div>
   );
