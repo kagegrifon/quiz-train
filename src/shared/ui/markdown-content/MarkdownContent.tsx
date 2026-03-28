@@ -18,7 +18,7 @@ const inlineP: Components['p'] = ({ children }) => <span>{children}</span>;
 export function MarkdownContent({ children, inline = false }: Props) {
   const components = useMemo<Components>(
     () => ({
-      p: inline ? inlineP : undefined,
+      ...(inline ? { p: inlineP } : {}),
       code({ className, children: c, ...rest }) {
         const match = LANGUAGE_RE.exec(className ?? '');
         if (match) {
