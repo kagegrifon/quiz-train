@@ -1,37 +1,42 @@
+import { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
+import type { Components } from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import styles from './MarkdownContent.module.css';
 
 interface Props {
   children: string;
-  /** Render block-level elements inline (для лейблов опций) */
+  /** Рендерить блочные элементы как inline (для лейблов опций) */
   inline?: boolean;
 }
 
+const LANGUAGE_RE = /language-(\w+)/;
+
+const inlineP: Components['p'] = ({ children }) => <span>{children}</span>;
+
 export function MarkdownContent({ children, inline = false }: Props) {
-  return (
-    <ReactMarkdown
-      components={{
-        p: inline ? ({ children: c }) => <span>{c}</span> : undefined,
-        code({ className, children: c, ...rest }) {
-          const match = /language-(\w+)/.exec(className || '');
-          if (match) {
-            return (
-              <SyntaxHighlighter style={oneDark} language={match[1]} PreTag="div">
-                {String(c).replace(/\n$/, '')}
-              </SyntaxHighlighter>
-            );
-          }
+  const components = useMemo<Components>(
+    () => ({
+      p: inline ? inlineP : undefined,
+      code({ className, children: c, ...rest }) {
+        const match = LANGUAGE_RE.exec(className ?? '');
+        if (match) {
           return (
-            <code className={styles.inlineCode} {...rest}>
-              {c}
-            </code>
+            <SyntaxHighlighter style={oneDark} language={match[1]} PreTag="div">
+              {String(c).replace(/\n$/, '')}
+            </SyntaxHighlighter>
           );
-        },
-      }}
-    >
-      {children}
-    </ReactMarkdown>
+        }
+        return (
+          <code className={styles.inlineCode} {...rest}>
+            {c}
+          </code>
+        );
+      },
+    }),
+    [inline],
   );
+
+  return <ReactMarkdown components={components}>{children}</ReactMarkdown>;
 }

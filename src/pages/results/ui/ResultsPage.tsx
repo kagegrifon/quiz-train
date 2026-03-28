@@ -7,9 +7,12 @@ import styles from './ResultsPage.module.css';
 export function ResultsPage() {
   const navigate = useNavigate();
   const search = useSearch({ from: '/results' });
-  const answers: Record<string, string[]> = search.answers
-    ? JSON.parse(search.answers as string)
-    : {};
+  let answers: Record<string, string[]> = {};
+  try {
+    if (search.answers) answers = JSON.parse(search.answers as string);
+  } catch {
+    // невалидный URL — показываем нулевой результат
+  }
 
   const { score, maxScore } = calcScore(questions, answers);
   const percent = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;

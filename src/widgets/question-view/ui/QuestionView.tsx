@@ -1,4 +1,4 @@
-import { Checkbox, Radio, Stack, Text } from '@mantine/core';
+import { Checkbox, Radio, Stack } from '@mantine/core';
 import type { Question } from '@/entities/question';
 import { MarkdownContent } from '@/shared/ui/markdown-content';
 import styles from './QuestionView.module.css';
@@ -39,11 +39,7 @@ export function QuestionView({ question, selectedIds, onChange, disabled }: Prop
                   key={opt.id}
                   value={opt.id}
                   disabled={disabled}
-                  label={
-                    <Text component="span">
-                      <MarkdownContent inline>{opt.labelMd}</MarkdownContent>
-                    </Text>
-                  }
+                  label={<MarkdownContent inline>{opt.labelMd}</MarkdownContent>}
                 />
               ))}
             </Stack>
@@ -55,11 +51,7 @@ export function QuestionView({ question, selectedIds, onChange, disabled }: Prop
               checked={selectedIds.includes(opt.id)}
               disabled={disabled}
               onChange={(e) => handleMultiChange(opt.id, e.currentTarget.checked)}
-              label={
-                <Text component="span">
-                  <MarkdownContent inline>{opt.labelMd}</MarkdownContent>
-                </Text>
-              }
+              label={<MarkdownContent inline>{opt.labelMd}</MarkdownContent>}
             />
           ))
         )}
