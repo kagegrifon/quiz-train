@@ -6,14 +6,22 @@
 - `react-markdown` + синтаксическая подсветка — рендеринг вопросов с кодом
 - **Mantine** — UI-компоненты (CSS Modules, без CSS-in-JS)
 - **TanStack Router** — навигация между страницами
+- **Playwright** — E2E-тесты в браузере
 
 ## Команды
 ```bash
 npm run dev      # dev-сервер
 npm run build    # production-сборка
 npm run lint     # линтер
-npm run test     # тесты
+npm run test     # unit-тесты
+npm run e2e      # E2E-тесты (Playwright)
 ```
+
+## E2E-тесты (Playwright)
+- Тесты размещаются в `e2e/` в корне проекта.
+- Покрывать ключевые пользовательские сценарии: старт квиза, прохождение вопросов, финиш, страница результатов, статистика.
+- Перед коммитом фичи, затрагивающей UI-поток, убедиться что `npm run e2e` проходит без ошибок.
+- Тесты пишутся на Playwright Test (`@playwright/test`). Использовать `page.goto`, `page.click`, `page.locator`, `expect`.
 
 ## Архитектура — FSD
 Проект следует Feature-Sliced Design. Подробнее: @docs/architecture.md

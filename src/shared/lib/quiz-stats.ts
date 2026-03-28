@@ -5,7 +5,8 @@ const STORAGE_KEY = 'programmingQuizStats:v1';
 export function loadAttempts(): AttemptRecord[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as AttemptRecord[]) : [];
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? (parsed as AttemptRecord[]) : [];
   } catch {
     return [];
   }
