@@ -1,12 +1,15 @@
-import { Button, Group, Paper, Progress, Text } from '@mantine/core';
-import { useNavigate } from '@tanstack/react-router';
+import { Badge, Button, Group, Paper, Progress, Text } from '@mantine/core';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useState } from 'react';
 import { questions } from '@/entities/question';
+import { calcScore } from '@/shared/lib/scoring';
+import { formatTime, useCountdown } from '@/shared/lib/use-countdown';
 import { QuestionView } from '@/widgets/question-view';
 import styles from './QuizPage.module.css';
 
 export function QuizPage() {
   const navigate = useNavigate();
+  const { timerEnabled, timeLimitSec } = useSearch({ from: '/quiz' });
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string[]>>({});
 
@@ -15,20 +18,37 @@ export function QuizPage() {
   const progress = ((currentIndex + 1) / total) * 100;
   const selectedIds = answers[question.id] ?? [];
 
-  const handleChange = (ids: string[]) => {
-    setAnswers((prev) => ({ ...prev, [question.id]: ids }));
-  };
+  const { score, maxScore } = calcScore(questions, answers);
 
   const handleFinish = () => {
     navigate({ to: '/results', search: { answers: JSON.stringify(answers) } });
   };
 
+  const remaining = useCountdown(timeLimitSec, timerEnabled, handleFinish);
+  const timerUrgent = timerEnabled && remaining <= 10;
+
+  const handleChange = (ids: string[]) => {
+    setAnswers((prev) => ({ ...prev, [question.id]: ids }));
+  };
+
   return (
     <div className={styles.root}>
       <div className={styles.header}>
-        <Text size="sm" c="dimmed">
-          Вопрос {currentIndex + 1} из {total}
-        </Text>
+        <Group justify="space-between">
+          <Text size="sm" c="dimmed">
+            Вопрос {currentIndex + 1} из {total}
+          </Text>
+          <Group gap="xs">
+            <Badge variant="light" color="blue">
+              {score} / {maxScore} баллов
+            </Badge>
+            {timerEnabled && (
+              <Badge variant="light" color={timerUrgent ? 'red' : 'gray'}>
+                {formatTime(remaining)}
+              </Badge>
+            )}
+          </Group>
+        </Group>
         <Progress value={progress} size="sm" className={styles.progress} />
       </div>
 

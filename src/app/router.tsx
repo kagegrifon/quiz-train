@@ -16,6 +16,10 @@ const indexRoute = createRoute({
 const quizRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/quiz',
+  validateSearch: (search: Record<string, unknown>) => ({
+    timerEnabled: search.timerEnabled === true || search.timerEnabled === 'true',
+    timeLimitSec: Number(search.timeLimitSec) || 120,
+  }),
   component: QuizPage,
 });
 

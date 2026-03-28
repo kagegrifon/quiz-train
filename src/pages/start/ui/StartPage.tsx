@@ -1,19 +1,49 @@
-import { Button, Stack, Text, Title } from '@mantine/core';
+import { Button, NumberInput, Paper, Stack, Switch, Text, Title } from '@mantine/core';
 import { useNavigate } from '@tanstack/react-router';
+import { useState } from 'react';
 import { questions } from '@/entities/question';
 import styles from './StartPage.module.css';
 
 export function StartPage() {
   const navigate = useNavigate();
+  const [timerEnabled, setTimerEnabled] = useState(false);
+  const [timeLimitSec, setTimeLimitSec] = useState<number>(120);
+
+  const handleStart = () => {
+    navigate({ to: '/quiz', search: { timerEnabled, timeLimitSec } });
+  };
 
   return (
     <div className={styles.root}>
-      <Stack align="center" gap="xl">
-        <Title order={1}>Квиз: Основы JavaScript</Title>
-        <Text c="dimmed" size="lg" ta="center">
-          {questions.length} вопросов · Проверь свои знания
-        </Text>
-        <Button size="lg" onClick={() => navigate({ to: '/quiz' })}>
+      <Stack align="center" gap="xl" w={360}>
+        <Stack align="center" gap="xs">
+          <Title order={1}>Квиз: Основы JavaScript</Title>
+          <Text c="dimmed" size="lg" ta="center">
+            {questions.length} вопросов · Проверь свои знания
+          </Text>
+        </Stack>
+
+        <Paper withBorder p="lg" radius="md" w="100%">
+          <Stack gap="md">
+            <Switch
+              label="Включить таймер"
+              checked={timerEnabled}
+              onChange={(e) => setTimerEnabled(e.currentTarget.checked)}
+            />
+            {timerEnabled && (
+              <NumberInput
+                label="Время на квиз (секунды)"
+                value={timeLimitSec}
+                onChange={(v) => setTimeLimitSec(Number(v))}
+                min={10}
+                max={600}
+                step={10}
+              />
+            )}
+          </Stack>
+        </Paper>
+
+        <Button size="lg" fullWidth onClick={handleStart}>
           Начать квиз
         </Button>
       </Stack>
