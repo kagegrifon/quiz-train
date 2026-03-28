@@ -1,11 +1,12 @@
-import { Button, Divider, NumberInput, Paper, SegmentedControl, Stack, Switch, Text, Title } from '@mantine/core';
+import { Button, Divider, NumberInput, Paper, SegmentedControl, SimpleGrid, Stack, Switch, Text, Title, UnstyledButton } from '@mantine/core';
 import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
-import { questions } from '@/entities/question';
+import { quizRegistry } from '@/entities/question';
 import styles from './StartPage.module.css';
 
 export function StartPage() {
   const navigate = useNavigate();
+  const [selectedQuizId, setSelectedQuizId] = useState(quizRegistry[0].id);
   const [timerEnabled, setTimerEnabled] = useState(false);
   const [timeLimitSec, setTimeLimitSec] = useState<number>(120);
   const [revealWhen, setRevealWhen] = useState<'onFinish' | 'afterAnswer'>('onFinish');
@@ -13,18 +14,42 @@ export function StartPage() {
   const [showWrong, setShowWrong] = useState(true);
 
   const handleStart = () => {
-    navigate({ to: '/quiz', search: { timerEnabled, timeLimitSec, revealWhen, showCorrect, showWrong } });
+    navigate({ to: '/quiz', search: { quizId: selectedQuizId, timerEnabled, timeLimitSec, revealWhen, showCorrect, showWrong } });
   };
 
   return (
     <div className={styles.root}>
-      <Stack align="center" gap="xl" w={380}>
+      <Stack align="center" gap="xl" w={420}>
         <Stack align="center" gap="xs">
-          <Title order={1}>Квиз: Основы JavaScript</Title>
-          <Text c="dimmed" size="lg" ta="center">
-            {questions.length} вопросов · Проверь свои знания
-          </Text>
+          <Title order={1}>Квиз</Title>
+          <Text c="dimmed" size="lg" ta="center">Выбери тему и проверь свои знания</Text>
         </Stack>
+
+        <SimpleGrid cols={2} w="100%">
+          {quizRegistry.map((quiz) => {
+            const isSelected = quiz.id === selectedQuizId;
+            return (
+              <UnstyledButton key={quiz.id} onClick={() => setSelectedQuizId(quiz.id)}>
+                <Paper
+                  withBorder
+                  p="md"
+                  radius="md"
+                  h="100%"
+                  style={{
+                    borderColor: isSelected ? 'var(--mantine-color-blue-filled)' : undefined,
+                    borderWidth: isSelected ? 2 : 1,
+                  }}
+                >
+                  <Stack gap="xs">
+                    <Text fw={600} size="sm">{quiz.title}</Text>
+                    <Text size="xs" c="dimmed">{quiz.description}</Text>
+                    <Text size="xs">{quiz.questions.length} вопросов</Text>
+                  </Stack>
+                </Paper>
+              </UnstyledButton>
+            );
+          })}
+        </SimpleGrid>
 
         <Paper withBorder p="lg" radius="md" w="100%">
           <Stack gap="md">
@@ -71,7 +96,7 @@ export function StartPage() {
         <Button size="lg" fullWidth onClick={handleStart}>
           Начать квиз
         </Button>
-        <Button variant="subtle" fullWidth onClick={() => navigate({ to: '/stats' })}>
+        <Button variant="subtle" fullWidth onClick={() => navigate({ to: '/stats', search: { quizId: '' } })}>
           Статистика
         </Button>
       </Stack>

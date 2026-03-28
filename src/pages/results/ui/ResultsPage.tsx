@@ -1,6 +1,6 @@
 import { Button, Divider, Paper, RingProgress, Stack, Text, Title } from '@mantine/core';
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import { questions } from '@/entities/question';
+import { getQuizById } from '@/entities/question';
 import { MarkdownContent } from '@/shared/ui/markdown-content';
 import { calcScore } from '@/shared/lib/scoring';
 import { loadAttempts } from '@/shared/lib/quiz-stats';
@@ -19,7 +19,9 @@ export function ResultsPage() {
     // невалидный URL — показываем нулевой результат
   }
 
-  const { showCorrect, showWrong } = search;
+  const { quizId, showCorrect, showWrong } = search;
+  const questions = getQuizById(quizId)?.questions ?? [];
+
   const revealConfig: RevealConfig | undefined =
     showCorrect || showWrong ? { showCorrect, showWrong } : undefined;
 
@@ -27,11 +29,11 @@ export function ResultsPage() {
   const percent = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
   const color = percent >= 70 ? 'green' : percent >= 40 ? 'yellow' : 'red';
 
-  const attempts = loadAttempts();
-  const bestPercent = attempts.length > 0 ? Math.max(...attempts.map((a) => a.percent)) : null;
+  const quizAttempts = loadAttempts().filter((a) => (a.quizId ?? 'js-basics') === quizId);
+  const bestPercent = quizAttempts.length > 0 ? Math.max(...quizAttempts.map((a) => a.percent)) : null;
   const avgPercent =
-    attempts.length > 0
-      ? Math.round(attempts.reduce((s, a) => s + a.percent, 0) / attempts.length)
+    quizAttempts.length > 0
+      ? Math.round(quizAttempts.reduce((s, a) => s + a.percent, 0) / quizAttempts.length)
       : null;
 
   return (
@@ -53,19 +55,19 @@ export function ResultsPage() {
             <Text size="lg">
               Набрано: <strong>{score}</strong> из <strong>{maxScore}</strong> баллов
             </Text>
-            {attempts.length > 0 && (
+            {quizAttempts.length > 0 && (
               <>
                 <Divider w="100%" />
                 <Stack gap="xs" align="center">
-                  <Text size="sm" c="dimmed">Попыток: {attempts.length}</Text>
+                  <Text size="sm" c="dimmed">Попыток: {quizAttempts.length}</Text>
                   <Text size="sm" c="dimmed">Лучший результат: {bestPercent}%</Text>
                   <Text size="sm" c="dimmed">Средний результат: {avgPercent}%</Text>
                 </Stack>
               </>
             )}
             <Button onClick={() => navigate({ to: '/' })}>Начать заново</Button>
-            {attempts.length > 0 && (
-              <Button variant="subtle" onClick={() => navigate({ to: '/stats' })}>
+            {quizAttempts.length > 0 && (
+              <Button variant="subtle" onClick={() => navigate({ to: '/stats', search: { quizId } })}>
                 Подробная статистика
               </Button>
             )}

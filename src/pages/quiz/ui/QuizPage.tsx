@@ -1,7 +1,7 @@
 import { Badge, Button, Group, Paper, Progress, Text } from '@mantine/core';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useRef, useState } from 'react';
-import { questions } from '@/entities/question';
+import { getQuizById } from '@/entities/question';
 import { calcScore } from '@/shared/lib/scoring';
 import { saveAttempt } from '@/shared/lib/quiz-stats';
 import { formatTime, useCountdown } from '@/shared/lib/use-countdown';
@@ -11,17 +11,18 @@ import styles from './QuizPage.module.css';
 
 export function QuizPage() {
   const navigate = useNavigate();
-  const { timerEnabled, timeLimitSec, revealWhen, showCorrect, showWrong } = useSearch({ from: '/quiz' });
+  const { quizId, timerEnabled, timeLimitSec, revealWhen, showCorrect, showWrong } = useSearch({ from: '/quiz' });
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string[]>>({});
   const [lockedIds, setLockedIds] = useState<string[]>([]);
   const startedAtRef = useRef(new Date().toISOString());
 
+  const questions = getQuizById(quizId)?.questions ?? [];
   const question = questions[currentIndex];
   const total = questions.length;
   const progress = ((currentIndex + 1) / total) * 100;
-  const selectedIds = answers[question.id] ?? [];
-  const isLocked = lockedIds.includes(question.id);
+  const selectedIds = answers[question?.id ?? ''] ?? [];
+  const isLocked = lockedIds.includes(question?.id ?? '');
 
   const { score, maxScore } = calcScore(questions, answers);
   const revealConfig: RevealConfig = { showCorrect, showWrong };
@@ -35,6 +36,7 @@ export function QuizPage() {
     const percent = finalMax > 0 ? Math.round((finalScore / finalMax) * 100) : 0;
 
     saveAttempt({
+      quizId,
       startedAt: startedAtRef.current,
       finishedAt,
       durationSec,
@@ -44,7 +46,7 @@ export function QuizPage() {
       settingsSnapshot: { timerEnabled, timeLimitSec, revealWhen, showCorrect, showWrong },
     });
 
-    navigate({ to: '/results', search: { answers: JSON.stringify(answers), revealWhen, showCorrect, showWrong } });
+    navigate({ to: '/results', search: { quizId, answers: JSON.stringify(answers), revealWhen, showCorrect, showWrong } });
   };
 
   const remaining = useCountdown(timeLimitSec, timerEnabled, handleFinish);
@@ -59,6 +61,10 @@ export function QuizPage() {
     setLockedIds(newLocked);
     if (newLocked.length === total) handleFinish();
   };
+
+  if (!question) {
+    return null;
+  }
 
   return (
     <div className={styles.root}>

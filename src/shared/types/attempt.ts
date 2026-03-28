@@ -1,4 +1,5 @@
 export interface AttemptRecord {
+  quizId: string;
   startedAt: string;
   finishedAt: string;
   durationSec: number;

@@ -1,2 +1,2 @@
-export type { Question, QuizOption } from './model/types';
-export { questions } from './model/questions';
+export type { Question, QuizOption, Quiz } from './model/types';
+export { quizRegistry, getQuizById } from './model/quiz-registry';

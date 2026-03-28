@@ -12,3 +12,10 @@ export interface Question {
   points: number;
   explainMd?: string;
 }
+
+export interface Quiz {
+  id: string;
+  title: string;
+  description: string;
+  questions: Question[];
+}

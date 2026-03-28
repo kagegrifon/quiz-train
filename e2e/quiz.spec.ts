@@ -8,8 +8,10 @@ test.beforeEach(async ({ page }) => {
 
 // ─── Start page ───────────────────────────────────────────────────────────────
 
-test('start page: renders title, start and stats buttons', async ({ page }) => {
-  await expect(page.getByRole('heading', { name: 'Квиз: Основы JavaScript' })).toBeVisible();
+test('start page: renders quiz cards, start and stats buttons', async ({ page }) => {
+  await expect(page.getByRole('heading', { name: 'Квиз' })).toBeVisible();
+  await expect(page.getByText('Основы JavaScript')).toBeVisible();
+  await expect(page.getByText('Основы TypeScript')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Начать квиз' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Статистика' })).toBeVisible();
 });
@@ -19,7 +21,6 @@ test('start page: renders title, start and stats buttons', async ({ page }) => {
 test('onFinish: score badge is hidden during quiz', async ({ page }) => {
   await page.getByRole('button', { name: 'Начать квиз' }).click();
   await expect(page.getByText(/Вопрос 1 из/)).toBeVisible();
-  // score badge must NOT appear in onFinish mode
   await expect(page.getByText(/баллов/)).not.toBeVisible();
 });
 
@@ -41,9 +42,7 @@ test('onFinish: results show attempts count after finish', async ({ page }) => {
 test('exit quiz: does not save attempt', async ({ page }) => {
   await page.getByRole('button', { name: 'Начать квиз' }).click();
   await page.getByRole('button', { name: 'Выйти из квиза' }).click();
-  // should return to start page
   await expect(page.getByRole('button', { name: 'Начать квиз' })).toBeVisible();
-  // stats page must show no attempts
   await page.getByRole('button', { name: 'Статистика' }).click();
   await expect(page.getByText('Нет завершённых попыток')).toBeVisible();
 });
@@ -60,9 +59,9 @@ test('stats: shows attempt row after finishing quiz', async ({ page }) => {
 });
 
 test('stats: back button returns to start page', async ({ page }) => {
-  await page.goto('/stats');
+  await page.goto('/stats?quizId=');
   await page.getByRole('button', { name: '← Назад' }).click();
-  await expect(page.getByRole('heading', { name: 'Квиз: Основы JavaScript' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Квиз' })).toBeVisible();
 });
 
 // ─── afterAnswer mode ─────────────────────────────────────────────────────────
@@ -79,7 +78,6 @@ test('afterAnswer: Ответить button appears and locks question', async ({
   const answerBtn = page.getByRole('button', { name: 'Ответить' });
   await expect(answerBtn).toBeVisible();
   await answerBtn.click();
-  // after answering: button gone, inputs disabled
   await expect(answerBtn).not.toBeVisible();
   await expect(page.getByRole('radio').first()).toBeDisabled();
 });

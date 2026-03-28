@@ -19,6 +19,7 @@ const quizRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/quiz',
   validateSearch: (search: Record<string, unknown>) => ({
+    quizId: (search.quizId as string) || 'js-basics',
     timerEnabled: search.timerEnabled === true || search.timerEnabled === 'true',
     timeLimitSec: Number(search.timeLimitSec) || 120,
     revealWhen: (search.revealWhen as string) === 'afterAnswer' ? ('afterAnswer' as const) : ('onFinish' as const),
@@ -32,6 +33,7 @@ const resultsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/results',
   validateSearch: (search: Record<string, unknown>) => ({
+    quizId: (search.quizId as string) || 'js-basics',
     answers: (search.answers as string) ?? '',
     revealWhen: (search.revealWhen as string) === 'afterAnswer' ? ('afterAnswer' as const) : ('onFinish' as const),
     showCorrect: search.showCorrect === true || search.showCorrect === 'true',
@@ -43,6 +45,9 @@ const resultsRoute = createRoute({
 const statsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/stats',
+  validateSearch: (search: Record<string, unknown>) => ({
+    quizId: (search.quizId as string) || '',
+  }),
   component: StatsPage,
 });
 
