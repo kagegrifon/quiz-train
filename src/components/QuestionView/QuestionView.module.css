@@ -1,0 +1,29 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.prompt {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.prompt pre {
+  margin: 0.75rem 0;
+  border-radius: 8px;
+  overflow: auto;
+}
+
+.options {
+  padding-top: 0.5rem;
+}
+
+.inlineCode {
+  background: var(--mantine-color-dark-6);
+  color: var(--mantine-color-orange-4);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+}

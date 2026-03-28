@@ -1,0 +1,27 @@
+.root {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.progress {
+  width: 100%;
+}
+
+.card {
+  flex: 1;
+}
+
+.footer {
+  padding-top: 0.5rem;
+}
