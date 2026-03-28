@@ -1,8 +1,9 @@
 import { Badge, Button, Group, Paper, Progress, Text } from '@mantine/core';
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { questions } from '@/entities/question';
 import { calcScore } from '@/shared/lib/scoring';
+import { saveAttempt } from '@/shared/lib/quiz-stats';
 import { formatTime, useCountdown } from '@/shared/lib/use-countdown';
 import type { RevealConfig } from '@/widgets/question-view';
 import { QuestionView } from '@/widgets/question-view';
@@ -14,6 +15,7 @@ export function QuizPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string[]>>({});
   const [lockedIds, setLockedIds] = useState<string[]>([]);
+  const startedAtRef = useRef(new Date().toISOString());
 
   const question = questions[currentIndex];
   const total = questions.length;
@@ -25,6 +27,23 @@ export function QuizPage() {
   const revealConfig: RevealConfig = { showCorrect, showWrong };
 
   const handleFinish = () => {
+    const finishedAt = new Date().toISOString();
+    const durationSec = Math.round(
+      (new Date(finishedAt).getTime() - new Date(startedAtRef.current).getTime()) / 1000,
+    );
+    const { score: finalScore, maxScore: finalMax } = calcScore(questions, answers);
+    const percent = finalMax > 0 ? Math.round((finalScore / finalMax) * 100) : 0;
+
+    saveAttempt({
+      startedAt: startedAtRef.current,
+      finishedAt,
+      durationSec,
+      score: finalScore,
+      maxScore: finalMax,
+      percent,
+      settingsSnapshot: { timerEnabled, timeLimitSec, revealWhen, showCorrect, showWrong },
+    });
+
     navigate({ to: '/results', search: { answers: JSON.stringify(answers), revealWhen, showCorrect, showWrong } });
   };
 

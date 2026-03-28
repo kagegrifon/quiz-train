@@ -3,6 +3,7 @@ import { useNavigate, useSearch } from '@tanstack/react-router';
 import { questions } from '@/entities/question';
 import { MarkdownContent } from '@/shared/ui/markdown-content';
 import { calcScore } from '@/shared/lib/scoring';
+import { loadAttempts } from '@/shared/lib/quiz-stats';
 import type { RevealConfig } from '@/widgets/question-view';
 import { QuestionView } from '@/widgets/question-view';
 import styles from './ResultsPage.module.css';
@@ -26,6 +27,13 @@ export function ResultsPage() {
   const percent = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
   const color = percent >= 70 ? 'green' : percent >= 40 ? 'yellow' : 'red';
 
+  const attempts = loadAttempts();
+  const bestPercent = attempts.length > 0 ? Math.max(...attempts.map((a) => a.percent)) : null;
+  const avgPercent =
+    attempts.length > 0
+      ? Math.round(attempts.reduce((s, a) => s + a.percent, 0) / attempts.length)
+      : null;
+
   return (
     <div className={styles.root}>
       <Stack gap="xl" className={styles.content}>
@@ -45,6 +53,16 @@ export function ResultsPage() {
             <Text size="lg">
               Набрано: <strong>{score}</strong> из <strong>{maxScore}</strong> баллов
             </Text>
+            {attempts.length > 0 && (
+              <>
+                <Divider w="100%" />
+                <Stack gap="xs" align="center">
+                  <Text size="sm" c="dimmed">Попыток: {attempts.length}</Text>
+                  <Text size="sm" c="dimmed">Лучший результат: {bestPercent}%</Text>
+                  <Text size="sm" c="dimmed">Средний результат: {avgPercent}%</Text>
+                </Stack>
+              </>
+            )}
             <Button onClick={() => navigate({ to: '/' })}>Начать заново</Button>
           </Stack>
         </Paper>

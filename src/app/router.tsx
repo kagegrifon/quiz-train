@@ -19,7 +19,7 @@ const quizRoute = createRoute({
   validateSearch: (search: Record<string, unknown>) => ({
     timerEnabled: search.timerEnabled === true || search.timerEnabled === 'true',
     timeLimitSec: Number(search.timeLimitSec) || 120,
-    revealWhen: (search.revealWhen as string) === 'afterAnswer' ? 'afterAnswer' : ('onFinish' as const),
+    revealWhen: (search.revealWhen as string) === 'afterAnswer' ? ('afterAnswer' as const) : ('onFinish' as const),
     showCorrect: search.showCorrect === true || search.showCorrect === 'true',
     showWrong: search.showWrong === true || search.showWrong === 'true',
   }),
@@ -31,7 +31,7 @@ const resultsRoute = createRoute({
   path: '/results',
   validateSearch: (search: Record<string, unknown>) => ({
     answers: (search.answers as string) ?? '',
-    revealWhen: (search.revealWhen as string) === 'afterAnswer' ? 'afterAnswer' : ('onFinish' as const),
+    revealWhen: (search.revealWhen as string) === 'afterAnswer' ? ('afterAnswer' as const) : ('onFinish' as const),
     showCorrect: search.showCorrect === true || search.showCorrect === 'true',
     showWrong: search.showWrong === true || search.showWrong === 'true',
   }),
