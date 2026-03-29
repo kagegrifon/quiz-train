@@ -2,6 +2,7 @@ import { Button, Paper, SegmentedControl, Stack, Table, Text, Title } from '@man
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { quizRegistry } from '@/entities/question';
 import { loadAttempts } from '@/shared/lib/quiz-stats';
+import { loadUserQuizzes } from '@/shared/lib/user-quiz-storage';
 import styles from './StatsPage.module.css';
 
 function formatDuration(sec: number): string {
@@ -20,12 +21,13 @@ function formatDate(iso: string): string {
   });
 }
 
-const quizTitle = (id?: string) =>
-  quizRegistry.find((q) => q.id === (id ?? 'js-basics'))?.title ?? id ?? 'js-basics';
-
 export function StatsPage() {
   const navigate = useNavigate();
   const { quizId } = useSearch({ from: '/stats' });
+
+  const allQuizzes = [...quizRegistry, ...loadUserQuizzes()];
+  const quizTitle = (id?: string) =>
+    allQuizzes.find((q) => q.id === (id ?? 'js-basics'))?.title ?? id ?? 'js-basics';
 
   const allAttempts = loadAttempts().slice().reverse();
   const filtered = quizId
@@ -34,7 +36,7 @@ export function StatsPage() {
 
   const filterData = [
     { label: 'Все', value: '' },
-    ...quizRegistry.map((q) => ({ label: q.title, value: q.id })),
+    ...allQuizzes.map((q) => ({ label: q.title, value: q.id })),
   ];
 
   const handleFilterChange = (value: string) => {
