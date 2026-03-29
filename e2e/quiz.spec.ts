@@ -67,13 +67,17 @@ test('stats: back button returns to start page', async ({ page }) => {
 // ─── afterAnswer mode ─────────────────────────────────────────────────────────
 
 test('afterAnswer: score badge is visible during quiz', async ({ page }) => {
+  await page.getByRole('button', { name: 'Настройки' }).click();
   await page.getByText('После ответа').click();
+  await page.getByRole('button', { name: 'Сохранить' }).click();
   await page.getByRole('button', { name: 'Начать квиз' }).click();
   await expect(page.getByText(/баллов/)).toBeVisible();
 });
 
 test('afterAnswer: Ответить button appears and locks question', async ({ page }) => {
+  await page.getByRole('button', { name: 'Настройки' }).click();
   await page.getByText('После ответа').click();
+  await page.getByRole('button', { name: 'Сохранить' }).click();
   await page.getByRole('button', { name: 'Начать квиз' }).click();
   const answerBtn = page.getByRole('button', { name: 'Ответить' });
   await expect(answerBtn).toBeVisible();

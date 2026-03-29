@@ -1,4 +1,4 @@
-import { Alert, ActionIcon, Badge, Button, Divider, Group, NumberInput, Paper, SegmentedControl, SimpleGrid, Stack, Switch, Text, Title, UnstyledButton } from '@mantine/core';
+import { ActionIcon, Alert, Badge, Button, Group, SimpleGrid, Stack, Text, Title, UnstyledButton, Paper } from '@mantine/core';
 import { IconTrash, IconUpload } from '@tabler/icons-react';
 import { useNavigate } from '@tanstack/react-router';
 import { useRef, useState } from 'react';
@@ -6,17 +6,22 @@ import { quizRegistry } from '@/entities/question';
 import type { Quiz } from '@/entities/question';
 import { loadUserQuizzes, saveUserQuiz, deleteUserQuiz } from '@/shared/lib/user-quiz-storage';
 import { parseAndValidateQuiz } from '@/shared/lib/quiz-validator';
+import { loadSettings } from '@/shared/lib/quiz-settings-storage';
+import type { QuizSettings } from '@/shared/types/quiz-settings';
 import styles from './StartPage.module.css';
+
+function formatSettingsSummary(s: QuizSettings): string {
+  const timer = s.timerEnabled
+    ? `Таймер: ${Math.floor(s.timeLimitSec / 60)} мин`
+    : 'Таймер: выкл';
+  const reveal = s.revealWhen === 'afterAnswer' ? 'после ответа' : 'в результатах';
+  return `${timer} · Ответы: ${reveal}`;
+}
 
 export function StartPage() {
   const navigate = useNavigate();
   const [userQuizzes, setUserQuizzes] = useState<Quiz[]>(() => loadUserQuizzes());
   const [selectedQuizId, setSelectedQuizId] = useState(quizRegistry[0].id);
-  const [timerEnabled, setTimerEnabled] = useState(false);
-  const [timeLimitSec, setTimeLimitSec] = useState<number>(120);
-  const [revealWhen, setRevealWhen] = useState<'onFinish' | 'afterAnswer'>('onFinish');
-  const [showCorrect, setShowCorrect] = useState(true);
-  const [showWrong, setShowWrong] = useState(true);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -25,6 +30,7 @@ export function StartPage() {
   const userQuizIds = new Set(userQuizzes.map((q) => q.id));
 
   const handleStart = () => {
+    const { timerEnabled, timeLimitSec, revealWhen, showCorrect, showWrong } = loadSettings();
     navigate({ to: '/quiz', search: { quizId: selectedQuizId, timerEnabled, timeLimitSec, revealWhen, showCorrect, showWrong } });
   };
 
@@ -135,54 +141,14 @@ export function StartPage() {
           </Alert>
         )}
 
-        <Paper withBorder p="lg" radius="md" w="100%">
-          <Stack gap="md">
-            <Switch
-              label="Включить таймер"
-              checked={timerEnabled}
-              onChange={(e) => setTimerEnabled(e.currentTarget.checked)}
-            />
-            {timerEnabled && (
-              <NumberInput
-                label="Время на квиз (секунды)"
-                value={timeLimitSec}
-                onChange={(v) => setTimeLimitSec(Number(v))}
-                min={10}
-                max={600}
-                step={10}
-              />
-            )}
-
-            <Divider />
-
-            <Text size="sm" fw={500}>Показывать ответы</Text>
-            <SegmentedControl
-              value={revealWhen}
-              onChange={(v) => setRevealWhen(v as 'onFinish' | 'afterAnswer')}
-              data={[
-                { label: 'Только в результатах', value: 'onFinish' },
-                { label: 'После ответа', value: 'afterAnswer' },
-              ]}
-            />
-            <Switch
-              label="Показывать правильные"
-              checked={showCorrect}
-              onChange={(e) => setShowCorrect(e.currentTarget.checked)}
-            />
-            <Switch
-              label="Показывать неправильные"
-              checked={showWrong}
-              onChange={(e) => setShowWrong(e.currentTarget.checked)}
-            />
-          </Stack>
-        </Paper>
-
-        <Button size="lg" fullWidth onClick={handleStart}>
-          Начать квиз
-        </Button>
-        <Button variant="subtle" fullWidth onClick={() => navigate({ to: '/stats', search: { quizId: '' } })}>
-          Статистика
-        </Button>
+        <Stack gap="xs" w="100%">
+          <Button size="lg" fullWidth onClick={handleStart}>
+            Начать квиз
+          </Button>
+          <Text size="xs" c="dimmed" ta="center">
+            {formatSettingsSummary(loadSettings())}
+          </Text>
+        </Stack>
       </Stack>
     </div>
   );

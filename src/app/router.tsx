@@ -4,6 +4,7 @@ import { StartPage } from '@/pages/start';
 import { QuizPage } from '@/pages/quiz';
 import { ResultsPage } from '@/pages/results';
 import { StatsPage } from '@/pages/stats';
+import { SettingsPage } from '@/pages/settings';
 
 const rootRoute = createRootRoute({
   component: AppLayout,
@@ -51,7 +52,13 @@ const statsRoute = createRoute({
   component: StatsPage,
 });
 
-const routeTree = rootRoute.addChildren([indexRoute, quizRoute, resultsRoute, statsRoute]);
+const settingsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/settings',
+  component: SettingsPage,
+});
+
+const routeTree = rootRoute.addChildren([indexRoute, quizRoute, resultsRoute, statsRoute, settingsRoute]);
 
 export const router = createRouter({ routeTree });
 

@@ -39,3 +39,4 @@ docs/features/
 | [color-scheme.md](done/color-scheme.md) | Переключение темы (тёмная / светлая) |
 | [quiz-catalog.md](planned/quiz-catalog.md) | Каталог квизов (выбор квиза) |
 | [quiz-upload.md](done/quiz-upload.md) | Загрузка квиза из файла |
+| [settings-page.md](done/settings-page.md) | Страница настроек и хедер навигации |
