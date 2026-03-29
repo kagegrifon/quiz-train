@@ -25,3 +25,22 @@ export function calcScore(
 
   return { score: Math.round(score), maxScore };
 }
+
+export function calcQuestionScore(
+  question: Question,
+  selected: string[],
+): { earned: number; max: number } {
+  const max = question.points;
+  if (question.mode === 'single') {
+    const earned =
+      selected.length === 1 && selected[0] === question.correctOptionIds[0] ? max : 0;
+    return { earned, max };
+  }
+  const correctSelected = selected.filter((id) =>
+    question.correctOptionIds.includes(id),
+  ).length;
+  return {
+    earned: Math.round(max * (correctSelected / question.correctOptionIds.length)),
+    max,
+  };
+}

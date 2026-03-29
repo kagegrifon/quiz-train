@@ -68,11 +68,13 @@ export function StatsPage() {
       <Stack gap="xl" className={styles.content}>
         <Title order={2}>Статистика</Title>
 
-        <SegmentedControl
-          value={quizId}
-          onChange={handleFilterChange}
-          data={filterData}
-        />
+        <div data-testid="stats-filter">
+          <SegmentedControl
+            value={quizId}
+            onChange={handleFilterChange}
+            data={filterData}
+          />
+        </div>
 
         {filtered.length === 0 ? (
           <Text c="dimmed">Нет попыток по выбранному квизу</Text>

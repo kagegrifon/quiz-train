@@ -32,7 +32,7 @@ test('upload: загрузить файл → квиз в каталоге → �
   await page.getByRole('button', { name: 'Начать заново' }).click();
 
   // 5. Удаляем квиз
-  await page.getByRole('button', { name: 'Удалить квиз', exact: true }).click();
+  await page.getByTestId('quiz-delete').click();
   await expect(page.getByText('Тестовый квиз')).not.toBeVisible();
 });
 

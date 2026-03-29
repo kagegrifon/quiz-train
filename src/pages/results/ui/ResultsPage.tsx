@@ -1,16 +1,20 @@
-import { Button, Divider, Paper, RingProgress, Stack, Text, Title } from '@mantine/core';
+import { Badge, Button, Divider, Group, Paper, RingProgress, SegmentedControl, Stack, Text, Title } from '@mantine/core';
 import { useNavigate, useSearch } from '@tanstack/react-router';
+import { useState } from 'react';
 import { getQuizById } from '@/entities/question';
 import { MarkdownContent } from '@/shared/ui/markdown-content';
-import { calcScore } from '@/shared/lib/scoring';
+import { calcScore, calcQuestionScore } from '@/shared/lib/scoring';
 import { loadAttempts } from '@/shared/lib/quiz-stats';
 import type { RevealConfig } from '@/widgets/question-view';
 import { QuestionView } from '@/widgets/question-view';
 import styles from './ResultsPage.module.css';
 
+type Filter = 'all' | 'correct' | 'incorrect';
+
 export function ResultsPage() {
   const navigate = useNavigate();
   const search = useSearch({ from: '/results' });
+  const [filter, setFilter] = useState<Filter>('all');
 
   let answers: Record<string, string[]> = {};
   try {
@@ -35,6 +39,12 @@ export function ResultsPage() {
     quizAttempts.length > 0
       ? Math.round(quizAttempts.reduce((s, a) => s + a.percent, 0) / quizAttempts.length)
       : null;
+
+  const visibleQuestions = questions.filter((q) => {
+    if (filter === 'all') return true;
+    const { earned, max } = calcQuestionScore(q, answers[q.id] ?? []);
+    return filter === 'correct' ? earned === max : earned < max;
+  });
 
   return (
     <div className={styles.root}>
@@ -74,31 +84,58 @@ export function ResultsPage() {
           </Stack>
         </Paper>
 
-        <Title order={3}>Разбор вопросов</Title>
+        <Stack gap="md">
+          <Title order={3}>Разбор вопросов</Title>
+          <div data-testid="results-filter">
+            <SegmentedControl
+              value={filter}
+              onChange={(v) => setFilter(v as Filter)}
+              data={[
+                { label: 'Все', value: 'all' },
+                { label: 'Правильные', value: 'correct' },
+                { label: 'Неправильные', value: 'incorrect' },
+              ]}
+            />
+          </div>
+        </Stack>
 
-        {questions.map((q, i) => (
-          <Paper key={q.id} shadow="xs" p="xl" radius="md">
-            <Stack gap="md">
-              <Text size="sm" c="dimmed">Вопрос {i + 1}</Text>
-              <QuestionView
-                question={q}
-                selectedIds={answers[q.id] ?? []}
-                onChange={() => {}}
-                disabled
-                revealConfig={revealConfig}
-              />
-              {q.explainMd && (
-                <>
-                  <Divider />
-                  <div>
-                    <Text size="sm" fw={500} mb={4}>Объяснение</Text>
-                    <MarkdownContent>{q.explainMd}</MarkdownContent>
-                  </div>
-                </>
-              )}
-            </Stack>
-          </Paper>
-        ))}
+        {visibleQuestions.length === 0 ? (
+          <Text c="dimmed">Нет вопросов в этой категории</Text>
+        ) : (
+          visibleQuestions.map((q) => {
+            const { earned, max } = calcQuestionScore(q, answers[q.id] ?? []);
+            const badgeColor = earned === max ? 'green' : earned > 0 ? 'yellow' : 'red';
+            const questionIndex = questions.indexOf(q);
+            return (
+              <Paper key={q.id} shadow="xs" p="xl" radius="md" data-testid={`question-card-${questionIndex}`}>
+                <Stack gap="md">
+                  <Group gap="xs">
+                    <Text size="sm" c="dimmed">Вопрос {questionIndex + 1}</Text>
+                    <Badge color={badgeColor} variant="light" size="sm">
+                      {earned} / {max}
+                    </Badge>
+                  </Group>
+                  <QuestionView
+                    question={q}
+                    selectedIds={answers[q.id] ?? []}
+                    onChange={() => {}}
+                    disabled
+                    revealConfig={revealConfig}
+                  />
+                  {q.explainMd && (
+                    <>
+                      <Divider />
+                      <div>
+                        <Text size="sm" fw={500} mb={4}>Объяснение</Text>
+                        <MarkdownContent>{q.explainMd}</MarkdownContent>
+                      </div>
+                    </>
+                  )}
+                </Stack>
+              </Paper>
+            );
+          })
+        )}
       </Stack>
     </div>
   );

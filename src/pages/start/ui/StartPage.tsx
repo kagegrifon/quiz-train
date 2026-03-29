@@ -92,7 +92,7 @@ export function StartPage() {
             const isSelected = quiz.id === selectedQuizId;
             const isUserQuiz = userQuizIds.has(quiz.id);
             return (
-              <UnstyledButton key={quiz.id} onClick={() => setSelectedQuizId(quiz.id)}>
+              <UnstyledButton key={quiz.id} data-testid={`quiz-card-${quiz.id}`} onClick={() => setSelectedQuizId(quiz.id)}>
                 <Paper
                   withBorder
                   p="md"
@@ -111,6 +111,7 @@ export function StartPage() {
                           variant="subtle"
                           size="sm"
                           aria-label="Скачать квиз"
+                          data-testid="quiz-download"
                           onClick={(e) => { e.stopPropagation(); handleExport(quiz); }}
                         >
                           <IconDownload size={14} />
@@ -121,6 +122,7 @@ export function StartPage() {
                             color="red"
                             size="sm"
                             aria-label="Удалить квиз"
+                            data-testid="quiz-delete"
                             onClick={(e) => { e.stopPropagation(); handleDelete(quiz.id); }}
                           >
                             <IconTrash size={14} />

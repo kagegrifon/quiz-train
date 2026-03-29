@@ -23,6 +23,31 @@ npm run e2e      # E2E-тесты (Playwright)
 - Перед коммитом фичи, затрагивающей UI-поток, убедиться что `npm run e2e` проходит без ошибок.
 - Тесты пишутся на Playwright Test (`@playwright/test`). Использовать `page.goto`, `page.click`, `page.locator`, `expect`.
 
+### Селекторы и data-testid
+
+Приоритет выбора селектора (от предпочтительного к запасному):
+1. `getByRole` + `name` — для кнопок с текстом, заголовков, инпутов с лейблом.
+2. `getByTestId` — для элементов без явной семантики или там где `getByRole`/`getByText` ненадёжны.
+3. `getByText` с `{ exact: true }` — только если нет `data-testid` и роль не применима.
+
+**Правило:** при добавлении нового интерактивного элемента, который не имеет уникальной текстовой роли (иконочные кнопки, сегменты фильтра, карточки), **сразу** проставлять `data-testid`.
+
+Формат атрибутов:
+```
+// Элементы без динамического контекста
+data-testid="filter-all"
+data-testid="quiz-download"
+
+// Элементы в списке (с идентификатором сущности)
+data-testid="quiz-card-js-basics"
+data-testid="quiz-download-js-basics"
+data-testid="quiz-delete-js-basics"
+
+// Секции/контейнеры
+data-testid="results-filter"
+data-testid="question-card-0"
+```
+
 ## Архитектура — FSD
 Проект следует Feature-Sliced Design. Подробнее: @docs/architecture.md
 

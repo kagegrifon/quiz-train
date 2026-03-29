@@ -7,14 +7,13 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('export: кнопка скачать есть на каждой карточке квиза', async ({ page }) => {
-  const downloadButtons = page.getByRole('button', { name: 'Скачать квиз', exact: true });
-  await expect(downloadButtons).toHaveCount(2); // js-basics + ts-basics
+  await expect(page.getByTestId('quiz-download')).toHaveCount(2); // js-basics + ts-basics
 });
 
 test('export: скачивание запускает загрузку файла с расширением .json', async ({ page }) => {
   const [download] = await Promise.all([
     page.waitForEvent('download'),
-    page.getByRole('button', { name: 'Скачать квиз', exact: true }).first().click(),
+    page.getByTestId('quiz-download').first().click(),
   ]);
   expect(download.suggestedFilename()).toMatch(/\.json$/);
 });
@@ -22,7 +21,7 @@ test('export: скачивание запускает загрузку файл�
 test('export: скачанный файл можно повторно импортировать без ошибок', async ({ page }) => {
   const [download] = await Promise.all([
     page.waitForEvent('download'),
-    page.getByRole('button', { name: 'Скачать квиз', exact: true }).first().click(),
+    page.getByTestId('quiz-download').first().click(),
   ]);
 
   const filePath = await download.path();
@@ -41,8 +40,6 @@ test('export: пользовательский квиз имеет кнопки 
   await expect(page.getByText('Тестовый квиз')).toBeVisible();
 
   // у пользовательской карточки должны быть обе кнопки
-  const downloadButtons = page.getByRole('button', { name: 'Скачать квиз', exact: true });
-  const deleteButtons = page.getByRole('button', { name: 'Удалить квиз', exact: true });
-  await expect(downloadButtons).toHaveCount(3); // 2 встроенных + 1 пользовательский
-  await expect(deleteButtons).toHaveCount(1);   // только пользовательский
+  await expect(page.getByTestId('quiz-download')).toHaveCount(3); // 2 встроенных + 1 пользовательский
+  await expect(page.getByTestId('quiz-delete')).toHaveCount(1);   // только пользовательский
 });
