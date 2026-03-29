@@ -1,5 +1,5 @@
 import { ActionIcon, Alert, Badge, Button, Group, SimpleGrid, Stack, Text, Title, UnstyledButton, Paper } from '@mantine/core';
-import { IconTrash, IconUpload } from '@tabler/icons-react';
+import { IconDownload, IconTrash, IconUpload } from '@tabler/icons-react';
 import { useNavigate } from '@tanstack/react-router';
 import { useRef, useState } from 'react';
 import { quizRegistry } from '@/entities/question';
@@ -7,6 +7,7 @@ import type { Quiz } from '@/entities/question';
 import { loadUserQuizzes, saveUserQuiz, deleteUserQuiz } from '@/shared/lib/user-quiz-storage';
 import { parseAndValidateQuiz } from '@/shared/lib/quiz-validator';
 import { loadSettings } from '@/shared/lib/quiz-settings-storage';
+import { downloadJson, slugify } from '@/shared/lib/download-json';
 import type { QuizSettings } from '@/shared/types/quiz-settings';
 import styles from './StartPage.module.css';
 
@@ -60,6 +61,15 @@ export function StartPage() {
     reader.readAsText(file);
   };
 
+  const handleExport = (quiz: Quiz) => {
+    const { id: _quizId, questions, ...rest } = quiz;
+    const exportData = {
+      ...rest,
+      questions: questions.map(({ id: _qId, ...q }) => q),
+    };
+    downloadJson(`${slugify(quiz.title)}.json`, exportData);
+  };
+
   const handleDelete = (quizId: string) => {
     deleteUserQuiz(quizId);
     const updated = loadUserQuizzes();
@@ -96,17 +106,27 @@ export function StartPage() {
                   <Stack gap="xs">
                     <Group justify="space-between" align="flex-start" wrap="nowrap">
                       <Text fw={600} size="sm">{quiz.title}</Text>
-                      {isUserQuiz && (
+                      <Group gap={2} wrap="nowrap">
                         <ActionIcon
                           variant="subtle"
-                          color="red"
                           size="sm"
-                          aria-label="Удалить квиз"
-                          onClick={(e) => { e.stopPropagation(); handleDelete(quiz.id); }}
+                          aria-label="Скачать квиз"
+                          onClick={(e) => { e.stopPropagation(); handleExport(quiz); }}
                         >
-                          <IconTrash size={14} />
+                          <IconDownload size={14} />
                         </ActionIcon>
-                      )}
+                        {isUserQuiz && (
+                          <ActionIcon
+                            variant="subtle"
+                            color="red"
+                            size="sm"
+                            aria-label="Удалить квиз"
+                            onClick={(e) => { e.stopPropagation(); handleDelete(quiz.id); }}
+                          >
+                            <IconTrash size={14} />
+                          </ActionIcon>
+                        )}
+                      </Group>
                     </Group>
                     {isUserQuiz && (
                       <Badge size="xs" variant="light" color="violet">Пользовательский</Badge>
