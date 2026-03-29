@@ -1,0 +1,28 @@
+{
+  "title": "Тестовый квиз",
+  "description": "Квиз для E2E-теста",
+  "questions": [
+    {
+      "promptMd": "Что такое `null` в JavaScript?",
+      "mode": "single",
+      "options": [
+        { "id": "a", "labelMd": "Отсутствие значения" },
+        { "id": "b", "labelMd": "Тип данных object" },
+        { "id": "c", "labelMd": "Undefined переменная" }
+      ],
+      "correctOptionIds": ["a"],
+      "points": 1
+    },
+    {
+      "promptMd": "Какие методы **мутируют** массив?",
+      "mode": "multi",
+      "options": [
+        { "id": "a", "labelMd": "`push()`" },
+        { "id": "b", "labelMd": "`map()`" },
+        { "id": "c", "labelMd": "`splice()`" }
+      ],
+      "correctOptionIds": ["a", "c"],
+      "points": 2
+    }
+  ]
+}
