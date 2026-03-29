@@ -30,6 +30,8 @@ docs/features/
 
 | Файл | Название |
 |---|---|
+| [elapsed-timer.md](planned/elapsed-timer.md) | Таймер прошедшего времени |
+| [results-breakdown.md](planned/results-breakdown.md) | Детализация результатов по вопросам |
 
 
 ### done
