@@ -43,3 +43,4 @@ docs/features/
 | [quiz-upload.md](done/quiz-upload.md) | Загрузка квиза из файла |
 | [settings-page.md](done/settings-page.md) | Страница настроек и хедер навигации |
 | [quiz-export.md](done/quiz-export.md) | Выгрузка квиза в файл |
+| [code-quality-gates.md](done/code-quality-gates.md) | Code Quality Gates (knip, husky, lint-staged) |

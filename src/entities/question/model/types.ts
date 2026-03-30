@@ -1,1 +1,1 @@
-export type { QuizOption, Question, Quiz } from '@/shared/types/quiz';
+export type { Question, Quiz } from '@/shared/types/quiz';

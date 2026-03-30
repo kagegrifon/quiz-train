@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 export function useCountdown(
   totalSec: number,
@@ -7,7 +7,9 @@ export function useCountdown(
 ): number {
   const [remaining, setRemaining] = useState(totalSec);
   const onExpireRef = useRef(onExpire);
-  onExpireRef.current = onExpire;
+  useLayoutEffect(() => {
+    onExpireRef.current = onExpire;
+  });
 
   useEffect(() => {
     if (!enabled) return;
