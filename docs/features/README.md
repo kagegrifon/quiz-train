@@ -30,8 +30,6 @@ docs/features/
 
 | Файл | Название |
 |---|---|
-| [elapsed-timer.md](planned/elapsed-timer.md) | Таймер прошедшего времени |
-| [results-breakdown.md](planned/results-breakdown.md) | Детализация результатов по вопросам |
 
 
 ### done
@@ -44,3 +42,5 @@ docs/features/
 | [settings-page.md](done/settings-page.md) | Страница настроек и хедер навигации |
 | [quiz-export.md](done/quiz-export.md) | Выгрузка квиза в файл |
 | [code-quality-gates.md](done/code-quality-gates.md) | Code Quality Gates (knip, husky, lint-staged) |
+| [results-breakdown.md](done/results-breakdown.md) | Детализация результатов по вопросам |
+| [elapsed-timer.md](done/elapsed-timer.md) | Таймер прошедшего времени |

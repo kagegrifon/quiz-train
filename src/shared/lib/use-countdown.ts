@@ -1,5 +1,17 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
+export function useStopwatch(enabled: boolean): number {
+  const [elapsed, setElapsed] = useState(0);
+
+  useEffect(() => {
+    if (!enabled) return;
+    const id = setInterval(() => setElapsed((s) => s + 1), 1000);
+    return () => clearInterval(id);
+  }, [enabled]);
+
+  return elapsed;
+}
+
 export function useCountdown(
   totalSec: number,
   enabled: boolean,

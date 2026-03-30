@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { getQuizById } from '@/entities/question';
 import { calcScore } from '@/shared/lib/scoring';
 import { saveAttempt } from '@/shared/lib/quiz-stats';
-import { formatTime, useCountdown } from '@/shared/lib/use-countdown';
+import { formatTime, useCountdown, useStopwatch } from '@/shared/lib/use-countdown';
 import type { RevealConfig } from '@/widgets/question-view';
 import { QuestionView } from '@/widgets/question-view';
 import styles from './QuizPage.module.css';
@@ -51,6 +51,7 @@ export function QuizPage() {
 
   const remaining = useCountdown(timeLimitSec, timerEnabled, handleFinish);
   const timerUrgent = timerEnabled && remaining <= 10;
+  const elapsed = useStopwatch(!timerEnabled);
 
   const handleChange = (ids: string[]) => {
     setAnswers((prev) => ({ ...prev, [question.id]: ids }));
@@ -82,6 +83,11 @@ export function QuizPage() {
             {timerEnabled && (
               <Badge variant="light" color={timerUrgent ? 'red' : 'gray'}>
                 {formatTime(remaining)}
+              </Badge>
+            )}
+            {!timerEnabled && (
+              <Badge variant="light" color="gray" data-testid="elapsed-timer">
+                {formatTime(elapsed)}
               </Badge>
             )}
           </Group>
