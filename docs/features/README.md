@@ -44,3 +44,4 @@ docs/features/
 | [code-quality-gates.md](done/code-quality-gates.md) | Code Quality Gates (knip, husky, lint-staged) |
 | [results-breakdown.md](done/results-breakdown.md) | Детализация результатов по вопросам |
 | [elapsed-timer.md](done/elapsed-timer.md) | Таймер прошедшего времени |
+| [bundle-optimization.md](done/bundle-optimization.md) | Оптимизация бандла (code splitting, PrismLight, visualizer) |

@@ -1,10 +1,17 @@
+import { lazy, Suspense } from 'react';
+import type { ComponentType } from 'react';
 import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router';
 import { AppLayout } from './AppLayout';
-import { StartPage } from '@/pages/start';
-import { QuizPage } from '@/pages/quiz';
-import { ResultsPage } from '@/pages/results';
-import { StatsPage } from '@/pages/stats';
-import { SettingsPage } from '@/pages/settings';
+
+function withSuspense(Component: ComponentType) {
+  return function LazyPage() {
+    return (
+      <Suspense fallback={null}>
+        <Component />
+      </Suspense>
+    );
+  };
+}
 
 const rootRoute = createRootRoute({
   component: AppLayout,
@@ -13,7 +20,7 @@ const rootRoute = createRootRoute({
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  component: StartPage,
+  component: withSuspense(lazy(() => import('@/pages/start').then((m) => ({ default: m.StartPage })))),
 });
 
 const quizRoute = createRoute({
@@ -27,7 +34,7 @@ const quizRoute = createRoute({
     showCorrect: search.showCorrect === true || search.showCorrect === 'true',
     showWrong: search.showWrong === true || search.showWrong === 'true',
   }),
-  component: QuizPage,
+  component: withSuspense(lazy(() => import('@/pages/quiz').then((m) => ({ default: m.QuizPage })))),
 });
 
 const resultsRoute = createRoute({
@@ -40,7 +47,7 @@ const resultsRoute = createRoute({
     showCorrect: search.showCorrect === true || search.showCorrect === 'true',
     showWrong: search.showWrong === true || search.showWrong === 'true',
   }),
-  component: ResultsPage,
+  component: withSuspense(lazy(() => import('@/pages/results').then((m) => ({ default: m.ResultsPage })))),
 });
 
 const statsRoute = createRoute({
@@ -49,13 +56,13 @@ const statsRoute = createRoute({
   validateSearch: (search: Record<string, unknown>) => ({
     quizId: (search.quizId as string) || '',
   }),
-  component: StatsPage,
+  component: withSuspense(lazy(() => import('@/pages/stats').then((m) => ({ default: m.StatsPage })))),
 });
 
 const settingsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/settings',
-  component: SettingsPage,
+  component: withSuspense(lazy(() => import('@/pages/settings').then((m) => ({ default: m.SettingsPage })))),
 });
 
 const routeTree = rootRoute.addChildren([indexRoute, quizRoute, resultsRoute, statsRoute, settingsRoute]);
