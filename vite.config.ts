@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/quiz/",
+  base: "/",
   plugins: [react()],
   resolve: {
     alias: {
@@ -12,4 +12,3 @@ export default defineConfig({
     },
   },
 });
-
