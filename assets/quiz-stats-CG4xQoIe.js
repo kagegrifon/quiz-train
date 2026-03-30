@@ -1,0 +1,1 @@
+var e=`programmingQuizStats:v1`;function t(){try{let t=localStorage.getItem(e),n=t?JSON.parse(t):[];return Array.isArray(n)?n:[]}catch{return[]}}function n(n){try{let r=t();localStorage.setItem(e,JSON.stringify([...r,n]))}catch{}}export{n,t};

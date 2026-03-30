@@ -1,0 +1,1 @@
+var e=`quizDefaults:v1`,t={timerEnabled:!1,timeLimitSec:120,revealWhen:`onFinish`,showCorrect:!0,showWrong:!0};function n(){try{let n=localStorage.getItem(e);return n?{...t,...JSON.parse(n)}:{...t}}catch{return{...t}}}function r(t){try{localStorage.setItem(e,JSON.stringify(t))}catch{}}export{n,r,t};
