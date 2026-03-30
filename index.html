@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/quiz/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>quiz-app-claude</title>
+    <script>
+      try {
+        var stored = localStorage.getItem('programmingQuizTheme');
+        var scheme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-mantine-color-scheme', scheme);
+      } catch(e) {}
+    </script>
+    <script type="module" crossorigin src="/quiz/assets/index-DlRGx32G.js"></script>
+    <link rel="stylesheet" crossorigin href="/quiz/assets/index-bDMM4Xcn.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
