@@ -1,73 +1,111 @@
-# React + TypeScript + Vite
+# Quiz Train
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[**Live Demo →**](https://kagegrifon.github.io/quiz-train/) · [🇷🇺 Русская версия](README-ru.md)
 
-Currently, two official plugins are available:
+> Web application for taking programming quizzes with configurable answer reveal,
+> partial scoring, and per-attempt statistics.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Live Demo
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**[https://kagegrifon.github.io/quiz-train/](https://kagegrifon.github.io/quiz-train/)**
 
-## Expanding the ESLint configuration
+Two built-in quizzes (JS Basics, TS Basics) are included. You can also upload
+your own quiz as a JSON file and export any quiz back to JSON.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Features
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **Markdown questions** — questions and answer options support full Markdown, including fenced code blocks with syntax highlighting
+- **Single-select & multi-select** — radio (one answer) and checkbox (multiple answers) question types
+- **Two reveal modes:**
+  - `afterAnswer` — show correct/wrong highlight immediately after clicking "Answer"; response is locked
+  - `onFinish` — freely navigate between questions, see results only on the Results page
+- **Partial scoring** — multi-select questions award points proportionally to correctly chosen options
+- **Optional countdown timer** — configurable time limit; quiz auto-submits at zero
+- **Upload / export quizzes** — load any JSON quiz from disk; export built-in or user quizzes
+- **Attempt history** — all attempts stored in `localStorage` with score, percentage, duration, and settings snapshot
+- **Dark / light theme** — toggle in the header, persisted across sessions
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## Tech Stack
+
+| Category  | Tools                                                    |
+|-----------|----------------------------------------------------------|
+| UI        | React 19, Mantine 8, CSS Modules, Tabler Icons           |
+| Routing   | TanStack Router (typed search params)                    |
+| Build     | Vite, TypeScript (strict mode)                           |
+| Testing   | Playwright (E2E)                                         |
+| Quality   | ESLint, Husky + lint-staged, knip (dead code detection)  |
+| Deploy    | GitHub Pages, gh-pages                                   |
+
+---
+
+## Architecture — Feature-Sliced Design
+
+The project follows [Feature-Sliced Design](https://feature-sliced.design/) — a layered architecture where each layer can only import from layers below it.
+
+| Layer      | Directory       | What's here                                             |
+|------------|-----------------|---------------------------------------------------------|
+| `app`      | `src/app/`      | Router, providers, global layout                        |
+| `pages`    | `src/pages/`    | Full pages: Start, Quiz, Results, Stats, Settings       |
+| `widgets`  | `src/widgets/`  | Complex UI blocks: QuestionView, AppHeader              |
+| `entities` | `src/entities/` | Business entities: Question, Quiz, built-in quiz data   |
+| `shared`   | `src/shared/`   | Reusable: scoring logic, storage helpers, UI primitives |
+
+Each slice exposes only a public API via `index.ts`. The `@/` alias points to `src/`.
+
+---
+
+## Technical Highlights
+
+- **Typed URL state** — TanStack Router validates all search params at the type level; quiz configuration (reveal mode, timer, show flags) lives in the URL, making results shareable
+- **Two reveal modes with partial scoring** — `afterAnswer` locks each response individually; multi-select scoring uses `points × (correctSelected / correctTotal)` without penalty for extra picks
+- **Playwright E2E suite** — covers catalog, quiz flow, results breakdown, upload/export, elapsed timer, and theme switching
+- **Pre-commit quality gates** — Husky + lint-staged run ESLint with `--max-warnings=0` on staged files; commits are blocked on any warning
+- **Bundle optimization** — route-level code splitting + `react-syntax-highlighter/prism-light` (registers only used languages) keeps the initial chunk small
+
+---
+
+## Getting Started
+
+**Prerequisites:** Node.js 20+
+
+```bash
+git clone https://github.com/kagegrifon/quiz-train.git
+cd quiz-train
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+App runs at `http://localhost:5173`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Commands
+
+| Command           | Description                                  |
+|-------------------|----------------------------------------------|
+| `npm run dev`     | Start development server (HMR)               |
+| `npm run build`   | Type-check + production build                |
+| `npm run preview` | Preview production build locally             |
+| `npm run e2e`     | Run Playwright E2E tests (headless)          |
+| `npm run e2e:ui`  | Open Playwright interactive test runner      |
+| `npm run lint`    | ESLint check on the entire project           |
+| `npm run knip`    | Detect unused files, exports, dependencies   |
+| `npm run deploy`  | Build + publish to GitHub Pages              |
+
+---
+
+## Docs
+
+| Document | Description |
+|----------|-------------|
+| [docs/architecture.md](docs/architecture.md) | FSD layer rules and current slices |
+| [docs/data-model.md](docs/data-model.md)     | Question / Quiz interface format    |
+| [docs/scoring.md](docs/scoring.md)           | Scoring logic (single & multi)      |
+| [docs/reveal-modes.md](docs/reveal-modes.md) | Reveal mode behaviour               |
+| [docs/storage.md](docs/storage.md)           | localStorage schema                 |
