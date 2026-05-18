@@ -1,13 +1,13 @@
 # Quiz Train
 
-[**Открыть демо →**](https://kagegrifon.github.io/quiz-train/) · [🇬🇧 English version](README.md)
+[English version](README.md)
 
 > Веб-приложение для прохождения квизов по программированию с настраиваемым
 > режимом проверки ответов, частичными баллами и статистикой попыток.
 
 ---
 
-## Живая версия
+## Где можно потрогать
 
 **[https://kagegrifon.github.io/quiz-train/](https://kagegrifon.github.io/quiz-train/)**
 

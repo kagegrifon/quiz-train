@@ -1,6 +1,6 @@
 # Quiz Train
 
-[**Live Demo →**](https://kagegrifon.github.io/quiz-train/) · [🇷🇺 Русская версия](README-ru.md)
+[🇷🇺 version](README-ru.md)
 
 > Web application for taking programming quizzes with configurable answer reveal,
 > partial scoring, and per-attempt statistics.
